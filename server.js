@@ -25,17 +25,10 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get("/api/:date", function (req, res) {
-  var timestamp = Number(req.params.date);
-  console.log(timestamp)
+app.get("/api/:timestamp", function (req, res) {
+  var timestamp = Number(req.params.timestamp);
   var date = new Date(timestamp);
-  console.log(date.getTime())
-  console.log(date)
-  console.log(req.params.date);
-  let frmt = dateformat(date, 'ddd, d mmm yyyy HH:MM:ss TT Z');
-  res.json({unix:timestamp, utc:frmt});
-
-
+  res.json({unix:timestamp, utc:date.toUTCString()});
 });
 
 // listen for requests :)
