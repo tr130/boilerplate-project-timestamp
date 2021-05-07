@@ -25,18 +25,30 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get("/api/:date", function (req, res) {
-  var timestamp = Number(req.params.date);
-  console.log(timestamp)
-  var date = new Date(timestamp);
-  console.log(date.getTime())
-  console.log(date)
-  console.log(req.params.date);
-  let frmt = dateformat(date, 'ddd, d mmm yyyy HH:MM:ss TT Z');
-  res.json({unix:timestamp, utc:frmt});
+// if no date parameter, return current date and time
+app.get("/api", function (req, res) {
+    let date = new Date()
+    res.json({unix:date.valueOf(), utc:date.toUTCString()});
+})
 
-
-});
+//main date endpoint
+app.get("/api/:date?", function (req,res) {
+  //if unix timestamp provided
+  if (req.params.date.length == 13) {
+    let timestamp = Number(req.params.date);
+    let date = new Date(timestamp);
+    res.json({unix:timestamp, utc:date.toUTCString()});
+  } 
+  //if date string provided
+  else {
+    let date = new Date(req.params.date);
+    //check for invalid dates
+    if (date == 'Invalid Date') {
+      res.json({error: 'Invalid Date'});
+  } else {
+    res.json({unix:date.valueOf(), utc:date.toUTCString()});
+  }}
+})
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
